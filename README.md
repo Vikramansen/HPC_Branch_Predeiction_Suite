@@ -1,8 +1,8 @@
-# HPC_Branch_Predeiction
+# HPC_Branch_Predeiction_Analysis_Suite
 
 # Overview
 
-This project is designed to compare the performance of various branch prediction strategies. It includes scripts to generate branch prediction datasets and to compare the effectiveness of different predictors, including Always Taken, Never Taken, Bimodal, GShare, and Perceptron predictors.
+In the realm of High-Performance Computing (HPC), where every cycle counts, the Branch Predictor Analysis Suite emerges as a cutting-edge toolset, crucial for optimizing processor efficiency. This advanced project is ingeniously crafted to delve into the intricacies of branch prediction strategies, a cornerstone in modern CPU design. It encompasses a suite of sophisticated scripts, meticulously designed for generating comprehensive branch prediction datasets and for conducting an in-depth comparative analysis of various state-of-the-art predictors. This includes, but is not limited to, Always Taken, Never Taken, Bimodal, GShare, and Perceptron predictors. The suite stands as an invaluable asset for HPC enthusiasts, researchers, and professionals, offering insights that drive the next generation of processor performance enhancements.
 
 # File Descriptions
 
