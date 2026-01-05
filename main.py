@@ -28,6 +28,7 @@ def generate_datasets():
     
     try:
         import datagen
+        datagen.main()
         print("\nDatasets generated successfully!")
         print("Files created:")
         print("  - ml_app_branch_dataset.csv")
