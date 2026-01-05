@@ -1,0 +1,8 @@
+# Requirements for HPC Branch Prediction Suite
+# No external dependencies required - uses only Python standard library
+# Python 3.6+ is recommended
+
+# Optional: For future enhancements
+# numpy>=1.19.0
+# pandas>=1.1.0
+# matplotlib>=3.3.0
