@@ -113,10 +113,29 @@ def main():
         help='Run full pipeline: generate datasets and compare predictors'
     )
     
+    parser.add_argument(
+        '--test',
+        action='store_true',
+        help='Run validation tests on predictors'
+    )
+    
+    parser.add_argument(
+        '--visualize',
+        action='store_true',
+        help='Generate text-based visualizations'
+    )
+    
+    parser.add_argument(
+        '--export',
+        action='store_true',
+        help='Export results to CSV files'
+    )
+    
     args = parser.parse_args()
     
     # If no arguments, run full pipeline
-    if not (args.generate or args.compare or args.legacy or args.full):
+    if not any([args.generate, args.compare, args.legacy, args.full, 
+                args.test, args.visualize, args.export]):
         args.full = True
     
     print_welcome()
@@ -154,6 +173,71 @@ def main():
         if not run_legacy_prediction():
             success = False
             print("\nLegacy prediction failed!")
+            sys.exit(1)
+    
+    # Run tests if requested
+    if args.test:
+        print("\nRunning validation tests...")
+        print("=" * 60)
+        try:
+            import test_predictors
+            if not test_predictors.run_all_tests():
+                success = False
+                print("\nValidation tests failed!")
+                sys.exit(1)
+        except Exception as e:
+            print(f"Error running tests: {e}")
+            success = False
+            sys.exit(1)
+    
+    # Generate visualizations if requested
+    if args.visualize:
+        # Check if datasets exist
+        datasets_exist, missing = check_datasets_exist()
+        
+        if not datasets_exist:
+            print("Error: Required datasets not found!")
+            print("Missing files:")
+            for f in missing:
+                print(f"  - {f}")
+            print("\nPlease run with --generate first to create datasets.")
+            sys.exit(1)
+        
+        print("\nGenerating visualizations...")
+        print("=" * 60)
+        try:
+            import visualize
+            visualize.main()
+        except Exception as e:
+            print(f"Error generating visualizations: {e}")
+            import traceback
+            traceback.print_exc()
+            success = False
+            sys.exit(1)
+    
+    # Export results if requested
+    if args.export:
+        # Check if datasets exist
+        datasets_exist, missing = check_datasets_exist()
+        
+        if not datasets_exist:
+            print("Error: Required datasets not found!")
+            print("Missing files:")
+            for f in missing:
+                print(f"  - {f}")
+            print("\nPlease run with --generate first to create datasets.")
+            sys.exit(1)
+        
+        print("\nExporting results...")
+        print("=" * 60)
+        try:
+            import export_results
+            export_results.main()
+        except Exception as e:
+            print(f"Error exporting results: {e}")
+            import traceback
+            traceback.print_exc()
+            success = False
             sys.exit(1)
     
     if success:
