@@ -2,6 +2,9 @@
 Configuration and utility functions for the HPC Branch Prediction Suite
 """
 
+import csv
+import sys
+
 # Dataset configurations
 DATASETS = {
     'ml_app': {
@@ -129,3 +132,28 @@ def print_success(message):
 def print_warning(message):
     """Print a warning message"""
     print(f"[WARNING] {message}")
+
+
+def load_dataset_from_file(filename):
+    """
+    Load branch trace dataset from CSV file
+    Returns: list of (address, outcome) tuples, or None on error
+    """
+    dataset = []
+    try:
+        with open(filename, 'r') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                if len(row) >= 2:
+                    address, outcome = row[0], row[1]
+                    dataset.append((address, outcome))
+                else:
+                    print_warning(f"Skipping malformed row in {filename}")
+        return dataset
+    except FileNotFoundError:
+        print_error(f"Dataset file '{filename}' not found.")
+        print("Please run 'python3 datagen.py' first to generate datasets.")
+        return None
+    except Exception as e:
+        print_error(f"Error loading dataset: {e}")
+        return None

@@ -4,9 +4,9 @@ Generates visual representations of predictor performance
 Note: This module provides text-based visualizations that work without external dependencies
 """
 
-import csv
 import sys
 from predictors import get_all_predictors
+from config import load_dataset_from_file
 
 
 def create_bar_chart(data, max_width=50):
@@ -27,23 +27,6 @@ def create_bar_chart(data, max_width=50):
         lines.append(f"{label:<{max_label_len}} {percentage} {bar}")
     
     return lines
-
-
-def load_dataset_from_file(filename):
-    """Load dataset from CSV file"""
-    dataset = []
-    try:
-        with open(filename, 'r') as file:
-            reader = csv.reader(file)
-            for row in reader:
-                if len(row) >= 2:
-                    address, outcome = row[0], row[1]
-                    dataset.append((address, outcome))
-    except FileNotFoundError:
-        print(f"Error: Dataset file '{filename}' not found.")
-        return None
-    
-    return dataset
 
 
 def evaluate_predictor(predictor, dataset):

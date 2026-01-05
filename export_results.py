@@ -7,22 +7,7 @@ import csv
 import os
 from datetime import datetime
 from predictors import get_all_predictors
-
-
-def load_dataset_from_file(filename):
-    """Load dataset from CSV file"""
-    dataset = []
-    try:
-        with open(filename, 'r') as file:
-            reader = csv.reader(file)
-            for row in reader:
-                if len(row) >= 2:
-                    address, outcome = row[0], row[1]
-                    dataset.append((address, outcome))
-    except FileNotFoundError:
-        return None
-    
-    return dataset
+from config import load_dataset_from_file
 
 
 def evaluate_predictor(predictor, dataset):

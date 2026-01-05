@@ -7,27 +7,7 @@ import csv
 import sys
 import time
 from predictors import get_all_predictors
-
-
-def load_dataset_from_file(filename):
-    """Load branch trace dataset from CSV file"""
-    dataset = []
-    try:
-        with open(filename, 'r') as file:
-            reader = csv.reader(file)
-            for row in reader:
-                if len(row) >= 2:
-                    address, outcome = row[0], row[1]
-                    dataset.append((address, outcome))
-    except FileNotFoundError:
-        print(f"Error: Dataset file '{filename}' not found.")
-        print("Please run 'python3 datagen.py' first to generate datasets.")
-        sys.exit(1)
-    except Exception as e:
-        print(f"Error loading dataset: {e}")
-        sys.exit(1)
-    
-    return dataset
+from config import load_dataset_from_file
 
 
 def evaluate_predictor(predictor, dataset, measure_time=True):

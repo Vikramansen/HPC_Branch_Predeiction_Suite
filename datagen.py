@@ -53,11 +53,6 @@ def generate_general_app_dataset(size=1000):
 
     return dataset
 
-# Generate the datasets
-ml_app_dataset = generate_ml_app_dataset(size=2000)
-io_app_dataset = generate_io_app_dataset(size=2000)
-general_app_dataset = generate_general_app_dataset(size=2000)
-
 
 def save_dataset_to_file(dataset, filename):
     with open(f'{filename}', 'w') as file:
@@ -65,11 +60,22 @@ def save_dataset_to_file(dataset, filename):
             file.write(f"{address},{outcome}\n")
     return filename
 
-# Save the datasets to files
-ml_app_dataset_filename = save_dataset_to_file(ml_app_dataset, "ml_app_branch_dataset.csv")
-io_app_dataset_filename = save_dataset_to_file(io_app_dataset, "io_app_branch_dataset.csv")
-general_app_dataset_filename = save_dataset_to_file(general_app_dataset, "general_app_branch_dataset.csv")
 
-(ml_app_dataset_filename, io_app_dataset_filename, general_app_dataset_filename)
+def main():
+    """Main function to generate all datasets"""
+    # Generate the datasets
+    ml_app_dataset = generate_ml_app_dataset(size=2000)
+    io_app_dataset = generate_io_app_dataset(size=2000)
+    general_app_dataset = generate_general_app_dataset(size=2000)
+    
+    # Save the datasets to files
+    ml_app_dataset_filename = save_dataset_to_file(ml_app_dataset, "ml_app_branch_dataset.csv")
+    io_app_dataset_filename = save_dataset_to_file(io_app_dataset, "io_app_branch_dataset.csv")
+    general_app_dataset_filename = save_dataset_to_file(general_app_dataset, "general_app_branch_dataset.csv")
+    
+    return (ml_app_dataset_filename, io_app_dataset_filename, general_app_dataset_filename)
 
+
+if __name__ == '__main__':
+    main()
 
