@@ -59,8 +59,6 @@ def load_dataset_from_file(filename: str) -> List[Tuple[str, str]]:
         raise ValueError(f"Error parsing CSV file {filename}: {e}")
 
 
-# Redefining the predictor functions
-# Always Taken Predictor
 def always_taken_predictor(dataset):
     """
     Always predicts 'taken' for every branch.
@@ -123,6 +121,7 @@ def bimodal_predictor(dataset, initial_prediction='taken'):
 def gshare_predictor(dataset, history_bits=1):
     """
     GShare predictor using global history register and pattern table.
+    Uses XOR of branch address and global history for indexing.
     
     Args:
         dataset: List of tuples (address, outcome)
@@ -135,8 +134,11 @@ def gshare_predictor(dataset, history_bits=1):
     pattern_table = [0] * (2 ** history_bits)
     correct_predictions = 0
 
-    for _, outcome in dataset:
-        index = history
+    for address, outcome in dataset:
+        # XOR branch address with history for GShare indexing
+        addr_value = int(address, 16) if isinstance(address, str) and address.startswith('0x') else hash(address)
+        index = (addr_value ^ history) & ((2 ** history_bits) - 1)
+        
         prediction = 'taken' if pattern_table[index] > 0 else 'not_taken'
         correct_predictions += prediction == outcome
         
@@ -150,6 +152,7 @@ def gshare_predictor(dataset, history_bits=1):
 def perceptron_predictor(dataset, history_bits=8, threshold=1.5):
     """
     Perceptron-based branch predictor using machine learning.
+    Uses branch address to select perceptron and global history for features.
     
     Args:
         dataset: List of tuples (address, outcome)
@@ -164,8 +167,11 @@ def perceptron_predictor(dataset, history_bits=8, threshold=1.5):
     weights = [[0] * (history_bits + 1) for _ in range(num_perceptrons)]
     correct_predictions = 0
 
-    for _, outcome in dataset:
-        index = history
+    for address, outcome in dataset:
+        # Use branch address to select perceptron
+        addr_value = int(address, 16) if isinstance(address, str) and address.startswith('0x') else hash(address)
+        index = addr_value & (num_perceptrons - 1)
+        
         x = [1] + [1 if bit == '1' else -1 for bit in bin(history)[2:].zfill(history_bits)]
         y = 1 if outcome == 'taken' else -1
         dot_product = sum(w * x_i for w, x_i in zip(weights[index], x))
