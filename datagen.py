@@ -1,7 +1,27 @@
-import random
+#!/usr/bin/env python3
+"""
+Branch Prediction Dataset Generator
 
-# Function to generate a dataset for an ML-based app
+This module generates synthetic branch prediction datasets for different
+application types: ML-based, I/O-heavy, and general applications.
+"""
+
+import random
+import argparse
+import sys
+import os
+
+
 def generate_ml_app_dataset(size=1000):
+    """
+    Generate a dataset for ML-based applications.
+    
+    Args:
+        size: Number of branch samples to generate
+        
+    Returns:
+        List of tuples (branch_address, outcome)
+    """
     dataset = []
     for i in range(size):
         branch_address = f'0x{2000 + i:04x}'
@@ -20,8 +40,17 @@ def generate_ml_app_dataset(size=1000):
 
     return dataset
 
-# Function to generate a dataset for an I/O heavy app
+
 def generate_io_app_dataset(size=1000):
+    """
+    Generate a dataset for I/O-heavy applications.
+    
+    Args:
+        size: Number of branch samples to generate
+        
+    Returns:
+        List of tuples (branch_address, outcome)
+    """
     dataset = []
     for i in range(size):
         branch_address = f'0x{3000 + i:04x}'
@@ -40,8 +69,17 @@ def generate_io_app_dataset(size=1000):
 
     return dataset
 
-# Function to generate a dataset for a general app
+
 def generate_general_app_dataset(size=1000):
+    """
+    Generate a dataset for general applications.
+    
+    Args:
+        size: Number of branch samples to generate
+        
+    Returns:
+        List of tuples (branch_address, outcome)
+    """
     dataset = []
     for i in range(size):
         branch_address = f'0x{4000 + i:04x}'
@@ -53,23 +91,91 @@ def generate_general_app_dataset(size=1000):
 
     return dataset
 
-# Generate the datasets
-ml_app_dataset = generate_ml_app_dataset(size=2000)
-io_app_dataset = generate_io_app_dataset(size=2000)
-general_app_dataset = generate_general_app_dataset(size=2000)
-
 
 def save_dataset_to_file(dataset, filename):
-    with open(f'{filename}', 'w') as file:
-        for address, outcome in dataset:
-            file.write(f"{address},{outcome}\n")
-    return filename
+    """
+    Save dataset to a CSV file.
+    
+    Args:
+        dataset: List of tuples (branch_address, outcome)
+        filename: Output filename
+        
+    Returns:
+        filename if successful
+        
+    Raises:
+        IOError: If file cannot be written
+    """
+    try:
+        with open(filename, 'w') as file:
+            file.write("address,outcome\n")  # Add header
+            for address, outcome in dataset:
+                file.write(f"{address},{outcome}\n")
+        print(f"✓ Successfully saved {len(dataset)} samples to {filename}")
+        return filename
+    except IOError as e:
+        print(f"✗ Error saving dataset to {filename}: {e}", file=sys.stderr)
+        raise
 
-# Save the datasets to files
-ml_app_dataset_filename = save_dataset_to_file(ml_app_dataset, "ml_app_branch_dataset.csv")
-io_app_dataset_filename = save_dataset_to_file(io_app_dataset, "io_app_branch_dataset.csv")
-general_app_dataset_filename = save_dataset_to_file(general_app_dataset, "general_app_branch_dataset.csv")
 
-(ml_app_dataset_filename, io_app_dataset_filename, general_app_dataset_filename)
+def main():
+    """Main function to generate and save datasets."""
+    parser = argparse.ArgumentParser(
+        description='Generate synthetic branch prediction datasets'
+    )
+    parser.add_argument(
+        '--size',
+        type=int,
+        default=2000,
+        help='Number of samples per dataset (default: 2000)'
+    )
+    parser.add_argument(
+        '--output-dir',
+        type=str,
+        default='.',
+        help='Output directory for datasets (default: current directory)'
+    )
+    
+    args = parser.parse_args()
+    
+    # Validate size
+    if args.size <= 0:
+        print("✗ Error: Size must be positive", file=sys.stderr)
+        sys.exit(1)
+    
+    # Create output directory if it doesn't exist
+    if args.output_dir != '.':
+        try:
+            os.makedirs(args.output_dir, exist_ok=True)
+        except OSError as e:
+            print(f"✗ Error creating directory {args.output_dir}: {e}", file=sys.stderr)
+            sys.exit(1)
+    
+    print(f"Generating branch prediction datasets with {args.size} samples each...")
+    print()
+    
+    try:
+        # Generate the datasets
+        ml_app_dataset = generate_ml_app_dataset(size=args.size)
+        io_app_dataset = generate_io_app_dataset(size=args.size)
+        general_app_dataset = generate_general_app_dataset(size=args.size)
+        
+        # Save the datasets to files
+        ml_filename = os.path.join(args.output_dir, "ml_app_branch_dataset.csv")
+        io_filename = os.path.join(args.output_dir, "io_app_branch_dataset.csv")
+        general_filename = os.path.join(args.output_dir, "general_app_branch_dataset.csv")
+        
+        save_dataset_to_file(ml_app_dataset, ml_filename)
+        save_dataset_to_file(io_app_dataset, io_filename)
+        save_dataset_to_file(general_app_dataset, general_filename)
+        
+        print()
+        print("✓ All datasets generated successfully!")
+        
+    except Exception as e:
+        print(f"✗ Error generating datasets: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
+if __name__ == "__main__":
+    main()
