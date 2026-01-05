@@ -90,7 +90,6 @@ ml_app_accuracies = calculate_accuracies(ml_app_dataset)
 io_app_accuracies = calculate_accuracies(io_app_dataset)
 general_app_accuracies = calculate_accuracies(general_app_dataset)
 
-(ml_app_accuracies, io_app_accuracies, general_app_accuracies)
 def print_accuracies(dataset_name, accuracies):
     print(f"Accuracies for {dataset_name} Dataset:")
     for predictor_name, accuracy in accuracies.items():

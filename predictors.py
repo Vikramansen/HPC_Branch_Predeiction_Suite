@@ -17,12 +17,25 @@ class BranchPredictor:
     def predict(self, address, history=None):
         """
         Make a prediction for a branch
-        Returns: 'taken' or 'not_taken'
+        
+        Args:
+            address: Branch address (string or int)
+            history: Optional global history (for predictors that use it)
+            
+        Returns:
+            str: 'taken' or 'not_taken'
         """
         raise NotImplementedError
     
     def update(self, address, actual_outcome, history=None):
-        """Update predictor state based on actual outcome"""
+        """
+        Update predictor state based on actual outcome
+        
+        Args:
+            address: Branch address (string or int)
+            actual_outcome: Actual branch outcome ('taken' or 'not_taken')
+            history: Optional global history (for predictors that use it)
+        """
         raise NotImplementedError
     
     def get_accuracy(self):
