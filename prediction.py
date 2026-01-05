@@ -89,7 +89,7 @@ def never_taken_predictor(dataset):
 
 def bimodal_predictor(dataset, initial_prediction='taken'):
     """
-    Simple predictor that maintains a single prediction state.
+    Bimodal predictor that maintains a state machine per branch address.
     
     Args:
         dataset: List of tuples (address, outcome)
@@ -98,8 +98,25 @@ def bimodal_predictor(dataset, initial_prediction='taken'):
     Returns:
         Accuracy as a float between 0 and 1
     """
-    prediction = initial_prediction
-    correct_predictions = sum(prediction == outcome for _, outcome in dataset)
+    # Use a 2-bit saturating counter per address
+    prediction_table = {}
+    correct_predictions = 0
+    
+    for address, outcome in dataset:
+        # Initialize counter for new addresses (0=strong not_taken, 3=strong taken)
+        if address not in prediction_table:
+            prediction_table[address] = 2 if initial_prediction == 'taken' else 1
+        
+        # Make prediction based on counter (>=2 means predict taken)
+        prediction = 'taken' if prediction_table[address] >= 2 else 'not_taken'
+        correct_predictions += (prediction == outcome)
+        
+        # Update counter (saturating at 0 and 3)
+        if outcome == 'taken':
+            prediction_table[address] = min(3, prediction_table[address] + 1)
+        else:
+            prediction_table[address] = max(0, prediction_table[address] - 1)
+    
     return correct_predictions / len(dataset)
 
 
