@@ -77,5 +77,5 @@ This project is licensed under the MIT License
 
 ## Authors
 
--   **Vikraman Senthil Kumar** - [viksenthil@ucdavis.edu](mailto:viksenthil@ucdavis.edu)
+-   **Vikraman Senthil Kumar** 
 -   **Madhumitha Santhanakrishnan**
