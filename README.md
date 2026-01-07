@@ -1,209 +1,81 @@
-# HPC Branch Prediction Analysis Suite
+# MicroArch Branch Predictor
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/)
+[![Status](https://img.shields.io/badge/status-active-success.svg)]()
+
+> A professional-grade microarchitecture simulation toolkit for analyzing branch prediction logic (GShare, Perceptron).
 
 ## Overview
 
-In the realm of High-Performance Computing (HPC), where every cycle counts, the Branch Predictor Analysis Suite emerges as a cutting-edge toolset, crucial for optimizing processor efficiency. This advanced project is ingeniously crafted to delve into the intricacies of branch prediction strategies, a cornerstone in modern CPU design. It encompasses a suite of sophisticated scripts, meticulously designed for generating comprehensive branch prediction datasets and for conducting an in-depth comparative analysis of various state-of-the-art predictors. This includes, but is not limited to, Always Taken, Never Taken, Bimodal, GShare, and Perceptron predictors. The suite stands as an invaluable asset for HPC enthusiasts, researchers, and professionals, offering insights that drive the next generation of processor performance enhancements.
+In the domain of Computer Architecture and High-Performance Computing (HPC), cycle-accurate behavior and pipeline efficiency are paramount. This suite implements low-level branch prediction logic found in modern processor pipelines. It allows for rigorous sensitivity analysis of predictor accuracy against varying workload phases (Training, Inference, I/O).
 
-## Features
+Key features:
+-   **Advanced Predictors**: Implementations of GShare, Perceptron, Bimodal, and static predictors.
+-   **Domain-Specific Analysis**: specialized datasets for differing workload characteristics.
+-   **Extensible Architecture**: Modular design allows easy addition of new predictors (e.g., TAGE, SRNN).
 
-- **Robust Error Handling**: Comprehensive error checking and validation
-- **Flexible Configuration**: Command-line arguments for all parameters
-- **Multiple Dataset Types**: ML-based, I/O-heavy, and general application datasets
-- **Advanced Predictors**: Implementation of 5 different prediction algorithms
-- **Configurable Parameters**: Adjustable history bits and predictor settings
-- **Professional Output**: Formatted tables and clear status messages
-- **Type-Safe**: Python type hints for better code quality
+## 🚀 Quick Start
 
-## Prerequisites
-
-- Python 3.6 or higher
-- No external dependencies required (uses only Python standard library)
-
-## Installation
+### Installation
 
 ```bash
 git clone https://github.com/Vikramansen/HPC_Branch_Predeiction_Suite.git
 cd HPC_Branch_Predeiction_Suite
 ```
 
-## Quick Start
+### Usage
 
-1. **Generate datasets**:
+The simulator uses a unified CLI `micro_sim.py`.
+
+**1. Generate Instruction Traces**
+Create synthetic branch signal traces:
 ```bash
-python3 datagen.py
+python micro_sim.py generate --output-dir data
 ```
 
-2. **Run comparison**:
+**2. Run Micro-Architecture Simulation**
+Evaluate branch predictor logic:
 ```bash
-python3 compare.py
-```
-
-Or use the direct prediction script:
-```bash
-python3 prediction.py
-```
-
-## File Descriptions
-
-- **datagen.py**: Generates synthetic datasets representing branch prediction scenarios for different application types
-- **prediction.py**: Main comparison tool with advanced features and error handling
-- **compare.py**: Wrapper script for backward compatibility (calls prediction.py)
-- **requirements.txt**: Python dependencies (currently none required)
-- **HPC_Branch_Prediction_Suite_Paper.pdf**: Research paper detailing the methodology
-- **\*_branch_dataset.csv**: Generated dataset files for different application types
-
-## Usage
-
-### Generating Datasets
-
-Generate datasets with default settings (2000 samples each):
-```bash
-python3 datagen.py
-```
-
-Generate datasets with custom size:
-```bash
-python3 datagen.py --size 5000
-```
-
-Generate datasets to a specific directory:
-```bash
-python3 datagen.py --size 3000 --output-dir ./datasets
+python micro_sim.py compare
 ```
 
 **Options**:
-- `--size SIZE`: Number of samples per dataset (default: 2000)
-- `--output-dir DIR`: Output directory for datasets (default: current directory)
+-   `--history-bits N`: Set history length for GShare/Perceptron (default: 8).
+-   `--datasets [FILE...]`: Compare on custom CSV files.
 
-### Running Comparisons
+## 📊 Supported Predictors
 
-Run comparison with default datasets:
-```bash
-python3 compare.py
-```
+| Predictor | Type | Description |
+|-----------|------|-------------|
+| **Always Taken** | Static | Simple baseline predicting all branches taken. |
+| **Never Taken** | Static | Simple baseline predicting all branches not taken. |
+| **Bimodal** | Dynamic | Uses 2-bit saturating counters per address. |
+| **GShare** | Dynamic | Uses global history XORed with address. |
+| **Perceptron** | Neural | Single-layer neural network for linearly separable paths. |
 
-Run with custom history bits:
-```bash
-python3 compare.py --history-bits 10
-```
+## 📚 Research & Citation
 
-Run with custom dataset files:
-```bash
-python3 compare.py --datasets my_dataset1.csv my_dataset2.csv
-```
+This project accompanies the research on **"Branch Prediction with Neural Networks"**.
+If you use this suite in your research, please cite
 
-Specify individual dataset paths:
-```bash
-python3 compare.py --ml-dataset path/to/ml.csv --io-dataset path/to/io.csv
-```
+A copy of the paper is available in [docs/HPC_Branch_Prediction_Suite_Paper.pdf](docs/HPC_Branch_Prediction_Suite_Paper.pdf).
 
-**Options**:
-- `--datasets FILE [FILE ...]`: Paths to custom dataset CSV files
-- `--ml-dataset FILE`: Path to ML app dataset (default: ml_app_branch_dataset.csv)
-- `--io-dataset FILE`: Path to I/O app dataset (default: io_app_branch_dataset.csv)
-- `--general-dataset FILE`: Path to general app dataset (default: general_app_branch_dataset.csv)
-- `--history-bits N`: History bits for GShare and Perceptron (default: 8)
+## 🔮 Future Roadmap
 
-## Branch Predictors
+-   **TAGE Predictor**: Implementation of the Tagged Geometric History Length predictor.
+-   **SRNN Integration**: Integrating Sliced Recurrent Neural Networks for handling non-linear histories.
+-   **Gem5 Simulation**: Porting logic to the Gem5 architectural simulator.
 
-The suite implements the following prediction algorithms:
+## 🤝 Contributing
 
-1. **Always Taken**: Predicts that every branch will be taken
-2. **Never Taken**: Predicts that no branch will be taken
-3. **Bimodal**: Simple predictor that maintains a single prediction state
-4. **GShare**: Advanced predictor using global history register and pattern table
-5. **Perceptron**: Machine learning-based predictor using perceptron weights
+Contributions are welcome!
 
-## Dataset Types
+## 📄 License
 
-The suite generates three types of datasets:
-
-1. **ML Application Dataset**: Simulates patterns from machine learning workloads with training/inference cycles
-2. **I/O Heavy Application Dataset**: Simulates patterns from I/O-intensive applications with error checking
-3. **General Application Dataset**: Simulates general-purpose application patterns with mixed behavior
-
-## Customization
-
-### Adding New Predictors
-
-Edit `prediction.py` and add your predictor function:
-
-```python
-def my_custom_predictor(dataset):
-    # Your implementation
-    correct_predictions = 0
-    for address, outcome in dataset:
-        # Make prediction
-        prediction = 'taken'  # or 'not_taken'
-        correct_predictions += (prediction == outcome)
-    return correct_predictions / len(dataset)
-
-# Add to predictors dictionary
-predictors["My Custom"] = my_custom_predictor
-```
-
-### Modifying Dataset Generation
-
-Edit `datagen.py` to change branch prediction patterns:
-
-```python
-def generate_ml_app_dataset(size=1000):
-    dataset = []
-    for i in range(size):
-        # Modify the logic here
-        outcome = 'taken' if condition else 'not_taken'
-        dataset.append((address, outcome))
-    return dataset
-```
-
-## Example Output
-
-```
-============================================================
-Branch Predictor Comparison Tool
-============================================================
-
-============================================================
-Accuracies for ML App Dataset:
-============================================================
-  Always Taken        :  74.35%
-  Never Taken         :  25.65%
-  Bimodal             :  74.35%
-  Gshare              :  88.20%
-  Perceptron          :  82.60%
-============================================================
-
-✓ Successfully processed 3 dataset(s)
-```
-
-## Error Handling
-
-The suite includes comprehensive error handling:
-
-- File not found errors with helpful messages
-- Invalid CSV format detection
-- Data validation for branch outcomes
-- Graceful degradation with warnings
-- Proper exit codes for automation
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
-
-## License
-
-This project is part of HPC research and educational purposes.
-
-## Citation
-
-If you use this suite in your research, please cite the accompanying paper:
-- HPC_Branch_Prediction_Suite_Paper.pdf
+This project is licensed under the MIT License
 
 ## Authors
 
-- Vikram Ansen
-
-## Acknowledgments
-
-This project implements branch prediction algorithms based on established computer architecture research and is designed for educational and research purposes in the field of High-Performance Computing.
-
+-   **Vikraman Senthil Kumar** - [viksenthil@ucdavis.edu](mailto:viksenthil@ucdavis.edu)
+-   **Madhumitha Santhanakrishnan**
